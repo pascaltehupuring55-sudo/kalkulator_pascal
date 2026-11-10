@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Navy</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8f0fe;
+      font-family: Arial, sans-serif;
+    }
+
+    .kalkulator {
+      width: 100%;
+      max-width: 430px;
+      padding: 12px;
+      background: #101d35;
+      border: 3px solid #263d60;
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(15, 35, 70, 0.3);
+    }
+
+    .judul {
+      padding: 8px 6px;
+      color: #b9d7ff;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    .layar {
+      min-height: 140px;
+      margin: 0 8px 24px;
+      padding: 18px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border-bottom: 3px solid #36547b;
+      text-align: right;
+    }
+
+    .riwayat {
+      min-height: 22px;
+      margin-bottom: 10px;
+      color: #a6c5ed;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .hasil {
+      color: #ffffff;
+      font-size: clamp(30px, 8vw, 52px);
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .tombol {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    button {
+      min-height: 65px;
+      padding: 12px 4px;
+      border: none;
+      border-radius: 6px;
+      background: #254b80;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 26px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #3565a6;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    button:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    .kontrol {
+      background: #4679b8;
+    }
+
+    .operator,
+    .fungsi {
+      background: #19375e;
+    }
+
+    .nol {
+      grid-column: span 2;
+    }
+
+    .sama-dengan {
+      grid-column: 1 / -1;
+      background: #b9dcff;
+      color: #102c50;
+    }
+
+    .sama-dengan:hover {
+      background: #d5eaff;
+    }
+
+    .catatan {
+      margin: 15px 0 2px;
+      color: #a6c5ed;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 380px) {
+      body {
+        padding: 10px;
+      }
+
+      .tombol {
+        gap: 8px;
+      }
+
+      button {
+        min-height: 55px;
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="kalkulator" aria-label="Kalkulator Navy">
+    <div class="judul">KALKULATOR NAVY</div>
+
+    <div class="layar">
+      <div id="riwayat" class="riwayat"></div>
+
+      <div
+        id="hasil"
+        class="hasil"
+        role="status"
+        aria-live="polite"
+      >0</div>
+    </div>
+
+    <div class="tombol">
+      <button type="button" class="kontrol" data-action="clear">
+        C
+      </button>
+
+      <button type="button" class="kontrol" data-action="delete">
+        DEL
+      </button>
+
+      <button type="button" class="fungsi" data-value="(">
+        (
+      </button>
+
+      <button type="button" class="fungsi" data-value=")">
+        )
+      </button>
+
+      <button type="button" class="fungsi" data-value="%">
+        %
+      </button>
+
+      <button
+        type="button"
+        class="fungsi"
+        data-value="√("
+        aria-label="Akar kuadrat"
+      >
+        √
+      </button>
+
+      <button
+        type="button"
+        class="fungsi"
+        data-value="^2"
+        aria-label="Kuadrat"
+      >
+        x²
+      </button>
+
+      <button
+        type="button"
+        class="fungsi"
+        data-value="^"
+        aria-label="Pangkat"
+      >
+        xʸ
+      </button>
+
+      <button type="button" data-value="7">7</button>
+      <button type="button" data-value="8">8</button>
+      <button type="button" data-value="9">9</button>
+      <button type="button" class="operator" data-value="÷">÷</button>
+
+      <button type="button" data-value="4">4</button>
+      <button type="button" data-value="5">5</button>
+      <button type="button" data-value="6">6</button>
+      <button type="button" class="operator" data-value="×">×</button>
+
+      <button type="button" data-value="1">1</button>
+      <button type="button" data-value="2">2</button>
+      <button type="button" data-value="3">3</button>
+      <button type="button" class="operator" data-value="-">−</button>
+
+      <button type="button" class="nol" data-value="0">0</button>
+      <button type="button" data-value=".">.</button>
+      <button type="button" class="operator" data-value="+">+</button>
+
+      <button
+        type="button"
+        class="sama-dengan"
+        data-action="calculate"
+      >
+        =
+      </button>
+    </div>
+
+    <p class="catatan">
+      Enter = hitung · Backspace = hapus · Esc = bersihkan<br>
+      % membagi nilai dengan 100 · Tutup kurung sebelum menghitung
+    </p>
+  </main>
+
+  <script>
+    const layar = document.getElementById("hasil");
+    const riwayat = document.getElementById("riwayat");
+
+    let ekspresi = "";
+    let selesai = false;
+
+    function perbaruiLayar() {
+      layar.textContent = ekspresi || "0";
+    }
+
+    function tambah(nilai) {
+      if (selesai) {
+        if (/^[0-9.(√]/.test(nilai)) {
+          ekspresi = "";
+        }
+
+        selesai = false;
+        riwayat.textContent = "";
+      }
+
+      ekspresi += nilai;
+      perbaruiLayar();
+    }
+
+    function bersihkan() {
+      ekspresi = "";
+      selesai = false;
+      riwayat.textContent = "";
+      perbaruiLayar();
+    }
+
+    function hapus() {
+      ekspresi = ekspresi.slice(0, -1);
+      selesai = false;
+      riwayat.textContent = "";
+      perbaruiLayar();
+    }
+
+    function evaluasi(teks) {
+      let posisi = 0;
+
+      function ambil(karakter) {
+        if (teks[posisi] === karakter) {
+          posisi++;
+          return true;
+        }
+
+        return false;
+      }
+
+      function jumlah() {
+        let nilai = kali();
+
+        while (posisi < teks.length) {
+          if (ambil("+")) {
+            nilai += kali();
+          } else if (ambil("-")) {
+            nilai -= kali();
+          } else {
+            break;
+          }
+        }
+
+        return nilai;
+      }
+
+      function kali() {
+        let nilai = unary();
+
+        while (posisi < teks.length) {
+          if (ambil("×")) {
+            nilai *= unary();
+          } else if (ambil("÷")) {
+            const pembagi = unary();
+
+            if (pembagi === 0) {
+              throw new Error("Tidak dapat membagi dengan nol");
+            }
+
+            nilai /= pembagi;
+          } else {
+            break;
+          }
+        }
+
+        return nilai;
+      }
+
+      function unary() {
+        if (ambil("+")) return unary();
+        if (ambil("-")) return -unary();
+
+        return pangkat();
+      }
+
+      function pangkat() {
+        let nilai = postfix();
+
+        if (ambil("^")) {
+          nilai = Math.pow(nilai, unary());
+        }
+
+        return nilai;
+      }
+
+      function postfix() {
+        let nilai = dasar();
+
+        while (ambil("%")) {
+          nilai /= 100;
+        }
+
+        return nilai;
+      }
+
+      function dasar() {
+        if (ambil("√")) {
+          const nilai = dasar();
+
+          if (nilai < 0) {
+            throw new Error("Akar bilangan negatif tidak didukung");
+          }
+
+          return Math.sqrt(nilai);
+        }
+
+        if (ambil("(")) {
+          const nilai = jumlah();
+
+          if (!ambil(")")) {
+            throw new Error("Kurung belum lengkap");
+          }
+
+          return nilai;
+        }
+
+        const cocok = teks.slice(posisi).match(
+          /^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?/i
+        );
+
+        if (!cocok) {
+          throw new Error("Periksa kembali susunan perhitungan");
+        }
+
+        posisi += cocok[0].length;
+        return Number(cocok[0]);
+      }
+
+      const nilai = jumlah();
+
+      if (posisi !== teks.length) {
+        throw new Error("Periksa operator atau tanda kurung");
+      }
+
+      if (!Number.isFinite(nilai)) {
+        throw new Error("Hasil di luar jangkauan atau tidak valid");
+      }
+
+      return nilai;
+    }
+
+    function hitung() {
+      if (!ekspresi) return;
+
+      const sebelumnya = ekspresi;
+
+      try {
+        const nilai = evaluasi(ekspresi);
+        const hasil = Number(nilai.toPrecision(12));
+
+        riwayat.textContent = sebelumnya + " =";
+        ekspresi = String(hasil);
+        selesai = true;
+        perbaruiLayar();
+      } catch (error) {
+        layar.textContent = "Error";
+        riwayat.textContent = error.message;
+        selesai = false;
+      }
+    }
+
+    document.querySelector(".tombol").addEventListener("click", (event) => {
+      const tombol = event.target.closest("button");
+
+      if (!tombol) return;
+
+      if (tombol.dataset.action === "clear") {
+        bersihkan();
+      } else if (tombol.dataset.action === "delete") {
+        hapus();
+      } else if (tombol.dataset.action === "calculate") {
+        hitung();
+      } else {
+        tambah(tombol.dataset.value);
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+      const tombol = event.key;
+
+      if (/^[0-9.+\-()%^]$/.test(tombol)) {
+        event.preventDefault();
+        tambah(tombol);
+      } else if (tombol === "*") {
+        event.preventDefault();
+        tambah("×");
+      } else if (tombol === "/") {
+        event.preventDefault();
+        tambah("÷");
+      } else if (tombol === "Enter" || tombol === "=") {
+        event.preventDefault();
+        hitung();
+      } else if (tombol === "Backspace") {
+        event.preventDefault();
+        hapus();
+      } else if (tombol === "Escape") {
+        event.preventDefault();
+        bersihkan();
+      }
+    });
+  </script>
+</body>
+</html>
